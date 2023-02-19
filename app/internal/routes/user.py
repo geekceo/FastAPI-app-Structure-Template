@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Body
+from fastapi.responses import JSONResponse
 from app.pkg.ssh_tools.ssh_tools import set_vpn_user
+from app.configuration.api_answers import servers_setup
 
 router = APIRouter(
     prefix='/api/v1'
@@ -29,8 +31,17 @@ def get_users_list():
 @router.get('/setup_server')
 def setup_server(ip: str = Body(embed=True), root_pass: str = Body(embed=True)):
 
-    set_vpn_user(ip, root_pass)
+    if set_vpn_user(ip, root_pass) == servers_setup.auth_failed_ip:
+        return JSONResponse(content={
+            'answer': servers_setup.auth_failed_ip
+        }, status_code=401)
+    
+    if set_vpn_user(ip, root_pass) == servers_setup.auth_failed_pass:
+        return JSONResponse(content={
+            'answer': servers_setup.auth_failed_pass
+        }, status_code=401)
+
 
     return {
-        'answer': 'OK'
+        'answer': 'Сервер настроен и добавлен в список ваших серверов'
     }
