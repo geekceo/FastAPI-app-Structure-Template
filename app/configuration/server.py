@@ -22,7 +22,8 @@ class Server:
     @staticmethod
     def __register_events(app):
 
-        app.on_event('startup')(repeat_every(seconds=2)(test))
+        #app.on_event('startup')(repeat_every(seconds=2)(test))
+        ...
 
     @staticmethod
     def __register_routes(app):
