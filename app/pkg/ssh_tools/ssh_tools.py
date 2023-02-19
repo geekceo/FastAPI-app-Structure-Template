@@ -15,7 +15,8 @@ def set_vpn_user(ip: str, root_pass: str) -> None | Exception:
         #channel.exec_command('useradd vpn && $(echo "vpn:lezgivpn" |chpasswd)')
         #channel.settimeout(3)
         command = f'useradd -m vpn \n usermod -aG sudo vpn \n echo "vpn:lezgivpn" | chpasswd \n' +\
-            ' echo "vpn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \n chsh -s /bin/bash vpn'
+            ' echo "vpn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \n echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \n' +\
+            ' chsh -s /bin/bash vpn'
         channel.exec_command(command)
         #channel.exec_command('usermod -aG sudo vpn')
         #channel.exec_command('echo -e "lezgivpn\nlezgivpn" | passwd vpn')
@@ -78,10 +79,10 @@ def configurate_nginx(ip: str, root_pass: str) -> None:
         nginx_conf = f.read()
 
 
-    nginx_conf = nginx_conf.replace('ip_add_here', ip)
+    format_nginx_conf = nginx_conf.replace('ip_add_here', ip)
 
     with open('C:/Test/nginx.conf', 'w') as f:
-        f.write(nginx_conf)
+        f.write(format_nginx_conf)
 
     transport = paramiko.Transport((ip, 22))
     transport.connect(username='root', password=root_pass)
